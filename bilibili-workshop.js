@@ -1,20 +1,16 @@
-export default {
+export default () => ({
   name: 'bilibili-workshop',
   displayName: 'B站工房',
   description: '在UP主主页和视频页添加工房入口',
   author: 'custom',
 
   entry: async () => {
-    const uid = getUID();
-    if (!uid) return;
+    const uid = getUID()
+    if (!uid) return
 
-    waitDom(() => {
-      addButton(uid);
-    });
+    waitDom(() => addButton(uid))
   },
-};
-
-// ================= 工具函数 =================
+})
 
 function getUID() {
   try {
@@ -22,9 +18,9 @@ function getUID() {
       window.__INITIAL_STATE__?.videoData?.owner?.mid ||
       window.__INITIAL_STATE__?.space?.info?.mid ||
       null
-    );
+    )
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -33,22 +29,20 @@ function waitDom(cb) {
     const shareBtn =
       document.querySelector('.video-share') ||
       document.querySelector('.h-action') ||
-      document.querySelector('.ops');
+      document.querySelector('.ops')
 
-    if (!shareBtn) return;
-    clearInterval(timer);
-    cb(shareBtn);
-  }, 500);
+    if (!shareBtn) return
+    clearInterval(timer)
+    cb()
+  }, 500)
 }
 
-// ================= UI 注入 =================
-
 function addButton(uid) {
-  if (document.getElementById('be-workshop-btn')) return;
+  if (document.getElementById('be-workshop-btn')) return
 
-  const btn = document.createElement('button');
-  btn.id = 'be-workshop-btn';
-  btn.innerText = 'B站工房';
+  const btn = document.createElement('button')
+  btn.id = 'be-workshop-btn'
+  btn.innerText = 'B站工房'
 
   btn.style.cssText = `
     margin-left: 8px;
@@ -59,29 +53,27 @@ function addButton(uid) {
     border: none;
     cursor: pointer;
     font-size: 13px;
-  `;
+  `
 
-  btn.onclick = () => openWorkshop(uid);
+  btn.onclick = () => openWorkshop(uid)
 
   const container =
     document.querySelector('.video-share')?.parentElement ||
     document.querySelector('.h-action') ||
-    document.body;
+    document.body
 
-  container.appendChild(btn);
+  container.appendChild(btn)
 }
 
-// ================= 悬浮手机窗口 =================
-
 function openWorkshop(uid) {
-  let modal = document.getElementById('be-workshop-modal');
+  let modal = document.getElementById('be-workshop-modal')
   if (modal) {
-    modal.remove();
-    return;
+    modal.remove()
+    return
   }
 
-  modal = document.createElement('div');
-  modal.id = 'be-workshop-modal';
+  modal = document.createElement('div')
+  modal.id = 'be-workshop-modal'
 
   modal.innerHTML = `
     <div class="be-phone">
@@ -91,9 +83,9 @@ function openWorkshop(uid) {
       </div>
       <iframe src="https://m.bilibili.com/space/${uid}"></iframe>
     </div>
-  `;
+  `
 
-  const style = document.createElement('style');
+  const style = document.createElement('style')
   style.innerHTML = `
     #be-workshop-modal {
       position: fixed;
@@ -120,7 +112,6 @@ function openWorkshop(uid) {
       align-items: center;
       padding: 0 12px;
       font-size: 13px;
-      cursor: move;
     }
     .be-header span:last-child {
       cursor: pointer;
@@ -131,10 +122,9 @@ function openWorkshop(uid) {
       border: none;
       background: #fff;
     }
-  `;
+  `
+  document.head.appendChild(style)
+  document.body.appendChild(modal)
 
-  document.head.appendChild(style);
-  document.body.appendChild(modal);
-
-  document.getElementById('be-close').onclick = () => modal.remove();
+  document.getElementById('be-close').onclick = () => modal.remove()
 }
